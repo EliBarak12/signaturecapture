@@ -1,5 +1,6 @@
 import React from 'react';
-
+import StringToPdfConverter from './StringToPdfConverter.jsx';
+import SignaturePad from './SignaturePad.jsx';
 const MainPage = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -19,6 +20,7 @@ const MainPage = () => {
             <li className="text-lg">Service 3</li>
           </ul>
         </section>
+        <StringToPdfConverter/>
         <section className="my-8">
           <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
           <form className="flex flex-col">
@@ -31,6 +33,7 @@ const MainPage = () => {
             <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-lg">Send Message</button>
           </form>
         </section>
+        <SignaturePad/>
       </main>
       <footer className="bg-gray-700 text-white p-4 text-center">
         <p>&copy; 2024 My Website. All rights reserved.</p>

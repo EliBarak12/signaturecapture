@@ -21,7 +21,9 @@ const SignaturePad = () => {
 
   return (
     <div>
-      <SignatureCanvas ref={signatureRef} penColor="black" canvasProps={{ width: 400, height: 200, className: 'sigCanvas' }} />
+        <div className=' border-slate-900'>
+      <SignatureCanvas  ref={signatureRef} penColor="black"  canvasProps={{ width: 400, height: 200, className: 'sigCanvas ' }} />
+      </div>
       <div>
         <button onClick={handleClear}>Clear</button>
         <button onClick={handleSave}>Save</button>
