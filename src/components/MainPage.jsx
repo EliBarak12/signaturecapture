@@ -1,42 +1,132 @@
-import React from 'react';
-import StringToPdfConverter from './StringToPdfConverter.jsx';
+import React, { useState } from 'react';
 import SignaturePad from './SignaturePad.jsx';
+import StringToPdfConverter from './StringToPdfConverter.jsx';
+import IDCardScanner from './IDCardScanner.jsx';
 const MainPage = () => {
+  const [name, setName] = useState('');
+  const [id, setId] = useState('');
+  const [image, setImage] = useState(null);
+  const [phone,setPhone] = useState("")
+  const [skoterCode, setScoterCode] = useState("")
+  const sigCanvas = React.useRef({});
+
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [capturedImageData, setCapturedImageData] = useState(null);
+
+  const handleOpenScanner = () => {
+    setIsScannerOpen(true);
+  };
+
+  const handleCloseScanner = () => {
+    setIsScannerOpen(false);
+    setCapturedImageData(null);
+  };
+
+  const handleSaveImage = () => {
+
+    console.log("Image saved:", capturedImageData);
+    setIsScannerOpen(false);
+  };
+
+  const handleRetakePhoto = () => {
+    setCapturedImageData(null);
+  };
+
+
+
+
+  const handleFormSubmit = () => { 
+
+  };
+
+
+
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div dir='rtl' className="bg-gray-100 min-h-screen">
       <header className="bg-blue-500 text-white p-4">
-        <h1 className="text-3xl font-semibold">Welcome to My Website</h1>
+        <h1 className="text-3xl font-semibold">לקוח</h1>
       </header>
-      <main className="container mx-auto p-4">
+      <main className="container mx-auto p-4 rounded-lg shadow-md bg-white">
+        <div className='flex flex-col items-center m-4'>
+      <input
+        type="text"
+        id="שם"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="border rounded-lg p-2 w-1/2 mx-auto"
+        placeholder="שם הלקוח"
+      />
+       <input 
+        type="text"
+        id="מספר ת.ז"
+        value={id}
+        onChange={(e) => setId(e.target.value)}
+        className="border rounded-lg p-2 w-1/2 mx-auto mt-6"
+        placeholder="תעודת זהות"
+      />
+      <input 
+        type="text"
+        id="מספר טלפון"
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+        className="border rounded-lg p-2 w-1/2 mx-auto mt-6"
+        placeholder="מספר טלפון"
+      />
+       <input 
+        type="text"
+        id="מספר קורקינט"
+        value={skoterCode}
+        onChange={(e) => setScoterCode(e.target.value)}
+        className="border rounded-lg p-2 w-1/2 mx-auto mt-6"
+        placeholder="מספר קורקינט"
+      />
+     
+       </div>
+       
         <section className="my-8">
-          <h2 className="text-2xl font-semibold mb-4">About Us</h2>
-          <p className="text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis id felis ut risus molestie commodo.</p>
+        {isScannerOpen ? (
+          <IDCardScanner
+            onCloseScanner={handleCloseScanner}
+            onCaptureImage={(imageData) => setCapturedImageData(imageData)}
+          />
+        ) : (
+          <button className="bg-blue-500 text-white py-2 px-4 rounded-lg" onClick={handleOpenScanner}>פתח מצלמה</button>
+        )}
+
+        {capturedImageData && (
+          <div>
+            <img src={capturedImageData} alt="Captured" style={{ maxWidth: '100%' }} />
+            <button onClick={handleSaveImage}>Save Image</button>
+            <button onClick={handleRetakePhoto}>Retake Photo</button>
+            <button onClick={handleCloseScanner}>Close Scanner</button>
+          </div>
+        )}
+{/* 
+          <button
+            onClick={handleScanButtonClick}
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+          >
+            סרוק תעודת זהות
+          </button>
+          {image && (
+            <img src={image} alt="Scanned ID" className="mt-4 border rounded-lg w-full" />
+          )} */}
         </section>
-        <section className="my-8">
-          <h2 className="text-2xl font-semibold mb-4">Services</h2>
-          <ul className="list-disc list-inside">
-            <li className="text-lg">Service 1</li>
-            <li className="text-lg">Service 2</li>
-            <li className="text-lg">Service 3</li>
-          </ul>
+        <section dir='rtl' className="my-8">
+          <label htmlFor="signature" className="text-lg mb-2 block">
+         חתימה :
+          
+              <SignaturePad setImageURL={setImage} imageURL={image} />
+          </label>
         </section>
-        <StringToPdfConverter/>
-        <section className="my-8">
-          <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
-          <form className="flex flex-col">
-            <label htmlFor="name" className="text-lg mb-2">Name:</label>
-            <input type="text" id="name" className="border rounded-lg p-2 mb-4" placeholder="Your Name" />
-            <label htmlFor="email" className="text-lg mb-2">Email:</label>
-            <input type="email" id="email" className="border rounded-lg p-2 mb-4" placeholder="Your Email" />
-            <label htmlFor="message" className="text-lg mb-2">Message:</label>
-            <textarea id="message" rows="4" className="border rounded-lg p-2 mb-4" placeholder="Your Message"></textarea>
-            <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-lg">Send Message</button>
-          </form>
-        </section>
-        <SignaturePad/>
+        <div className=' flex justify-center'>
+        <StringToPdfConverter  name={name} id={id} signatureImageURL={image} imageData={capturedImageData} skoterCode={skoterCode} phone={phone}/>
+        </div>
+       
+        
       </main>
-      <footer className="bg-gray-700 text-white p-4 text-center">
-        <p>&copy; 2024 My Website. All rights reserved.</p>
+      <footer className="bg-gray-700 text-white p-4 text-center rounded-b-lg">
+      <p>&copy; . הקורקינטיה של ישי</p>
       </footer>
     </div>
   );

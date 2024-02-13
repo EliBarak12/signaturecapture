@@ -1,44 +1,64 @@
-import React, { useState } from 'react';
-import { Document, Page, Text, View, StyleSheet, PDFViewer, Font } from '@react-pdf/renderer';
-import SignaturePad from './SignaturePad.jsx';
-Font.register({ family: 'Rubik', src: "http://fonts.gstatic.com/s/rubik/v3/4sMyW_teKWHB3K8Hm-Il6A.ttf" });
+import React, { useState } from "react";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  PDFViewer,
+  Image,
+  Font,
+} from "@react-pdf/renderer";
+import SignaturePad from "./SignaturePad.jsx";
+import { saveAs } from 'file-saver';
+Font.register({
+  family: "Rubik",
+  src: "http://fonts.gstatic.com/s/rubik/v3/4sMyW_teKWHB3K8Hm-Il6A.ttf",
+});
 
 const styles = StyleSheet.create({
     page: {
-        flexDirection: 'row',
-        backgroundColor: '#E4E4E4',
+      flexDirection: "row",
+      backgroundColor: "#E4E4E4",
     },
     section: {
-        margin: 10,
-        padding: 10,
-        flexGrow: 1,
-        fontFamily: 'Rubik',
+      margin: 10,
+      padding: 10,
+      flexGrow: 1,
+      fontFamily: "Rubik",
+      fontSize: 10, // Adjust font size here
     },
-});
+    signatureContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom:200,
+      marginLeft:250,
+    },
+    signatureText: {
+      marginRight: 10,
+    },
+    signatureImage: {
+        flexDirection: "row",
+      alignItems: "center",
+      marginBottom:200,
+      marginLeft:250,
+      width: 50,
+      height: 25,
+    },
+  });
 
-function StringToPdfConverter() {
-    const [name, setName] = useState('');
-    const [id, setId] = useState('');
-    const [signature, setSignature] = useState('');
+function StringToPdfConverter({ name, id, signatureImageURL,imageData ,skoterCode, phone}) {
+    console.log(signatureImageURL);
+  
 
-    const handleNameChange = (e) => {
-        setName(e.target.value || '');
-    };
 
-    const handleIdChange = (e) => {
-        setId(e.target.value || '');
-    };
 
-    const handleSignatureChange = (e) => {
-        setSignature(e.target.value || '');
-    };
-
-    const renderPdfContent = () => {
-        const pdfText = `             
+  const renderPdfContent = () => {
+    const pdfText = `             
         כתב שחרור מאחריות  (ויתור על תביעות)
         על ידי חתימתך על מסמך זה הנך מוותר/ת בזאת על כל זכות, מכל מן וסוג שהיא, לרבות על הזכות לתבוע ו/או על הזכות לשיפוי אשר עשויה להיווצר בגין השכרת כלי הנהיגה כאמור להלן, הכרוכה בסיכונים ובחוסר נוחות. ובידוע שכל העושה בהם שימוש עלול להיפצע ו/או להיפגע פיזית ו/או להינזק כלכלית ו/או נפשית ו/או פיזית וכו'. מסמך זה מהווה "הסכמה לנטילת סיכון" ו/או "כתב ויתור ושחרור", תוקפו משפטי ומחייב ויש לקראו בעיון רב. 
         נטילת כל אחד מהדו גלגליים שלהלן: קורקינט חשמלי ,אופניים חשמליים (להלן: "הדו גלגלי" ו/או "המושכר"), מידי ישי מיר ת.ז 209215409 ו/או מי מטעמו )להלן: "המשכיר"(, לצורך עשיית שימוש בו, בין הייתר על ידי הפעלתו ו/או רכיבה עליו, כרוכה בסיכון. מסמך זה מתייחס ויכלול את כל הפעילויות, האירועים או השירותים הניתנים, מוסדרים , מאורגנים, מאושרים על ידי המשכיר הכוללים שימוש במושכר בין אם במהלך הרכיבה עצמה על הכלי ובין אם במהלך נטילתו והחזרתו. 
-        לכן אני הח"מ _________________________ ת.ז ________________________ (להלן: "השוכר/ת"), מצהיר בזאת ומאשר כדלקמן: 
+        לכן אני הח"מ _${name}_ ת.ז __${id}__ (להלן: "השוכר/ת"), מצהיר בזאת ומאשר כדלקמן: 
         א.	אני שוכר את המושכר לשימושי האישי בלבד והנני מצהיר כי לי הידע ו/או היכולת ו/או המיומנות וכו 'להפעיל את המושכר בצורה הטובה ביותר תוך שמירה על כללי הנהיגה ו/או על בריאותי. 
         ב.	כל שימוש שיעשה במושכר, שלא על ידי יהא באחריותי בלבד, על כל המשתמע מכך, בין אם שימוש כאמור יעשה על ידי קטין ו/או בוגר וכו 'מטעמי ו/או שלא מטעמי. 
         ג.	כל זמן שהמושכר נמצא בחזקתי ו/או בחזקת מי מטעמי, הנני אחראי לשמירת תקינותו ו/או תפעולו הראוי של המושכר ו/או לשלומי הבריאותי ו/או לשלום הבריאות של המשתמש מטעמי. 
@@ -58,43 +78,59 @@ function StringToPdfConverter() {
         יז.	קראתי את כל האמור בהסכם זה, הנני מבין/נה את תכנו הבנה מלאה והנני מסכים/מה באישור התשלום להיות מחויב/ת על ידו. 
         
         
-        תאריך:  	 	 	 	 	 	 	    חתימה: 	_______________________________ 	 	
+        תאריך:  	 	 	 	 ${new Date().toLocaleString()}	 	 	    חתימה: 	________________ 	 	
+        מספר טלפון : ${phone}   מספר קורקינט : ${skoterCode}
         במקרה של קטין מתחת לגיל 18
         אני______ ____________ ת.ז_________________ אפוטרופסו החוקי של הקטין____________ _______ת.ז__________ ___ מצהיר בזה כי קראת בעיון רב את כל האמור במסמך זהו לאחר שהבנתי והפנמתי את תוכנו, אני מקבלו ומאשרו וחותם עליו מרצוני הטוב והחופשי. תוקף אישור זה הינו ממועד חתימתו ועד לתאריך._____________ 
         תאריך:  ______________________________.                 	 	         חתימה: __________________________________ 
-        `
-
-        return (
-            <Document>
-                <Page size="A4" style={styles.page}>
-                    <View style={styles.section}>
-                        <Text>{pdfText}</Text>
-                    </View>
-                </Page>
-            </Document>
-        );
-    };
+        `;
 
     return (
-        <div>
-            <div>
-                <label htmlFor="name">שם:</label>
-                <input type="text" id="name" value={name} onChange={handleNameChange} />
-            </div>
-            <div>
-                <label htmlFor="id">ת.ז:</label>
-                <input type="text" id="id" value={id} onChange={handleIdChange} />
-            </div>
-            <div>
-                <label htmlFor="signature">חתימה:</label>
-                <input type="text" id="signature" value={signature} onChange={handleSignatureChange} />
-            </div>
-            <br />
-            <PDFViewer width="500" height="600">
-                {renderPdfContent()}
-            </PDFViewer>
-        </div>
+      <Document>
+        <Page size="A4" style={styles.page}>
+          <View style={styles.section}>
+          <Text style={{ direction: "rtl", textAlign: "right" }}>{pdfText}</Text>
+         
+              
+              {signatureImageURL && (
+                <Image src={signatureImageURL} style={styles.signatureImage} />
+              )}
+            
+          
+              
+             
+          </View>
+         
+           
+        </Page>
+        {imageData && (
+    <View style={styles.page}> {/* or another appropriate style */}
+      <Image src={imageData} style={{ width: 400, height: 300 }} />
+    </View>
+  )}
+
+      </Document>
     );
+  };
+  const savePdf = async () => {
+    const pdfBlob = await renderPdfContent().toBlob(); // Convert PDF to Blob
+    saveAs(pdfBlob, "generated_pdf.pdf"); // Save the PDF locally
+  };
+
+  return (
+    <div>
+     
+      <PDFViewer width="500" height="600">
+        {renderPdfContent()}
+      </PDFViewer>
+      <button
+          onClick={savePdf}
+          className="bg-blue-500 text-white py-2 px-4 rounded-lg m-8"
+        >
+          שמירת הטופס
+        </button>
+    </div>
+  );
 }
 
 export default StringToPdfConverter;
