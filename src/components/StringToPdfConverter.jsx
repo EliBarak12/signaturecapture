@@ -13,7 +13,7 @@ import SignaturePad from "./SignaturePad.jsx";
 import { saveAs } from 'file-saver';
 Font.register({
   family: "Rubik",
-  src: "http://fonts.gstatic.com/s/rubik/v3/4sMyW_teKWHB3K8Hm-Il6A.ttf",
+  src: "https://fonts.gstatic.com/s/rubik/v3/4sMyW_teKWHB3K8Hm-Il6A.ttf",
 });
 
 const styles = StyleSheet.create({
